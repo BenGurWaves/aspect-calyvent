@@ -1,24 +1,34 @@
-/* ASPECT — application controller.
-   100% client-side: SVGO runs in the browser, nothing is ever uploaded. */
-
-import { optimize } from '/vendor/svgo.browser.js';
-import { generate, EXT } from '/assets/exporters.js';
+/* ASPECT — aspect ratio calculator.
+   100% client-side: GCD algorithm, CSS generation, Tailwind mapping. */
 
 const $ = (s) => document.querySelector(s);
-const enc = new TextEncoder();
-const bytesOf = (str) => enc.encode(str).length;
-const kb = (b) => (b / 1024).toFixed(b < 1024 * 10 ? 1 : 0);
 
-const SVGO_CONFIG = {
-  multipass: true,
-  plugins: [
-    { name: 'preset-default', params: { overrides: { removeViewBox: false, cleanupIds: { minify: true } } } },
-    'removeDimensions',          // normalize to a viewBox-driven box
-    'sortAttrs',
-  ],
+// GCD algorithm for ratio simplification
+function gcd(a, b) {
+  a = Math.abs(a); b = Math.abs(b);
+  while (b) { const t = b; b = a % b; a = t; }
+  return a;
+}
+
+// Simplify ratio to lowest terms
+function simplifyRatio(w, h) {
+  const d = gcd(w, h);
+  return { w: w / d, h: h / d };
+}
+
+// Tailwind aspect-ratio utility mapping
+const TAILWIND_RATIOS = {
+  '1:1': 'aspect-square',
+  '16:9': 'aspect-video',
+  '4:3': 'aspect-[4/3]',
+  '3:2': 'aspect-[3/2]',
+  '21:9': 'aspect-[21/9]',
+  '2:1': 'aspect-[2/1]',
+  '3:4': 'aspect-[3/4]',
+  '9:16': 'aspect-[9/16]',
 };
 
-const state = { rawSVG: '', optimizedSVG: '', name: 'icon', before: 0, after: 0, fmt: 'svg' };
+const state = { width: 1920, height: 1080, ratio: '16:9', decimal: 1.78, fmt: 'css' };
 
 /* ----------------------------------------------------------------- TOAST */
 let toastTimer;
@@ -30,87 +40,68 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-/* ------------------------------------------------------------ OPTIMIZE */
-function setMetrics(before, after) {
-  const remaining = before ? after / before : 1;
-  const pct = before ? Math.max(0, Math.round((1 - after / before) * 100)) : 0;
-  $('#byteBefore').textContent = kb(before) + ' KB';
-  const afterEl = $('#byteAfter');
-  afterEl.innerHTML = kb(after) + '<span class="unit"> KB</span>';
-  // kinetic stack: the optimized number scales down as compression deepens
-  const scale = 0.45 + 0.55 * Math.min(1, Math.max(0, remaining));
-  afterEl.style.transformOrigin = 'left bottom';
-  afterEl.style.transform = `scale(${scale.toFixed(3)})`;
-  $('#redPct').textContent = pct + '%';
-}
-
-function renderPreview(svg) {
-  const p = $('#preview');
-  p.innerHTML = '';
-  try {
-    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
-    if (doc.querySelector('parsererror')) throw new Error('parse');
-    p.appendChild(doc.documentElement.cloneNode(true));
-  } catch {
-    p.innerHTML = '<span class="preview__empty">preview unavailable</span>';
-  }
-}
-
-function runOptimize() {
-  const input = $('#inputCode').value.trim();
-  if (!input) { toast('Drop or paste an SVG first'); return; }
-  let result;
-  try {
-    result = optimize(input, SVGO_CONFIG);
-  } catch (e) {
-    toast('Could not parse SVG');
+/* ----------------------------------------------------------- CALCULATE */
+function calculate() {
+  const w = parseInt($('#widthInput').value) || 0;
+  const h = parseInt($('#heightInput').value) || 0;
+  
+  if (w <= 0 || h <= 0) {
+    toast('Enter valid dimensions');
     return;
   }
-  state.rawSVG = input;
-  state.optimizedSVG = result.data;
-  state.before = bytesOf(input);
-  state.after = bytesOf(result.data);
-  setMetrics(state.before, state.after);
-  renderPreview(result.data);
-  refreshOutput();
-  enableExports(true);
+
+  state.width = w;
+  state.height = h;
+  
+  const { w: sw, h: sh } = simplifyRatio(w, h);
+  state.ratio = `${sw}:${sh}`;
+  state.decimal = (w / h).toFixed(2);
+  
+  updateDisplay();
+  updateCanvas();
+  updateOutput();
   pushHistory();
 }
 
-/* --------------------------------------------------------------- EXPORT */
-function refreshOutput() {
-  if (!state.optimizedSVG) return;
-  let out;
-  try { out = generate(state.fmt, state.optimizedSVG); }
-  catch { out = state.optimizedSVG; }
-  $('#outputCode').value = out;
+function updateDisplay() {
+  $('#ratioMain').textContent = state.ratio;
+  $('#ratioDecimal').textContent = state.decimal;
+  $('#canvasLabel').textContent = state.ratio;
+  $('.logo__vb').textContent = state.ratio;
 }
 
-function enableExports(on) {
-  $('#copyBtn').disabled = !on;
-  $('#downloadBtn').disabled = !on;
+function updateCanvas() {
+  const box = $('#canvasBox');
+  const wrapper = $('#canvasWrapper');
+  const wrapperRect = wrapper.getBoundingClientRect();
+  const padding = 48;
+  const maxW = wrapperRect.width - padding;
+  const maxH = wrapperRect.height - padding;
+  
+  // Calculate scale to fit within wrapper while preserving aspect ratio
+  const scale = Math.min(maxW / state.width, maxH / state.height);
+  const displayW = state.width * scale;
+  const displayH = state.height * scale;
+  
+  box.style.width = `${displayW}px`;
+  box.style.height = `${displayH}px`;
+}
+
+function updateOutput() {
+  let out = '';
+  if (state.fmt === 'css') {
+    out = `aspect-ratio: ${state.ratio.replace(':', '/')} /* ${state.decimal} */`;
+  } else if (state.fmt === 'tailwind') {
+    const utility = TAILWIND_RATIOS[state.ratio] || `aspect-[${state.ratio.replace(':', '/')}]`;
+    out = `${utility} /* ${state.ratio} */`;
+  }
+  $('#outputCode').value = out;
 }
 
 function selectTab(fmt) {
   state.fmt = fmt;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('is-active', t.dataset.fmt === fmt));
-  refreshOutput();
-}
-
-/* --------------------------------------------------------------- INPUT */
-function loadSVGText(text, name) {
-  $('#inputCode').value = text.trim();
-  if (name) state.name = name.replace(/\.svg$/i, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'icon';
-  $('#runBtn').disabled = !text.trim();
-  runOptimize();
-}
-
-function readFile(file) {
-  if (!file) return;
-  if (!/svg/i.test(file.type) && !/\.svg$/i.test(file.name)) { toast('SVG files only'); return; }
-  const r = new FileReader();
-  r.onload = () => loadSVGText(String(r.result), file.name);
-  r.readAsText(file);
+  updateOutput();
 }
 
 /* ------------------------------------------------------- HISTORY (slips) */
@@ -122,11 +113,9 @@ function pushHistory() {
   const h = getHistory();
   const entry = {
     id: Date.now(),
-    name: state.name,
-    before: state.before,
-    after: state.after,
-    pct: state.before ? Math.round((1 - state.after / state.before) * 100) : 0,
-    svg: state.optimizedSVG.length < 60000 ? state.optimizedSVG : '',
+    w: state.width,
+    h: state.height,
+    ratio: state.ratio,
   };
   h.unshift(entry);
   saveHistory(h.slice(0, 8));
@@ -141,17 +130,18 @@ function renderSlips() {
   h.forEach(e => {
     const b = document.createElement('button');
     b.className = 'slip';
-    b.innerHTML = `${e.name}.svg<span class="s-pct">−${e.pct}%</span>`;
+    b.innerHTML = `${e.w}×${e.h}<span class="s-pct">${e.ratio}</span>`;
     b.addEventListener('click', () => {
-      if (!e.svg) { toast('Slip too large to restore'); return; }
-      state.optimizedSVG = e.svg; state.name = e.name;
-      state.before = e.before; state.after = e.after;
-      $('#inputCode').value = e.svg;
-      setMetrics(e.before, e.after);
-      renderPreview(e.svg);
-      refreshOutput();
-      enableExports(true);
-      toast('Slip restored');
+      $('#widthInput').value = e.w;
+      $('#heightInput').value = e.h;
+      state.width = e.w;
+      state.height = e.h;
+      state.ratio = e.ratio;
+      state.decimal = (e.w / e.h).toFixed(2);
+      updateDisplay();
+      updateCanvas();
+      updateOutput();
+      toast('Restored');
     });
     wrap.appendChild(b);
   });
@@ -163,16 +153,15 @@ function initCursor() {
   const anchor = $('#anchor');
   const h1 = $('#h1'), h2 = $('#h2');
   let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
-  const interactive = 'a, button, textarea, .slip, .dropzone, .logo, .tab';
+  const interactive = 'a, button, input, .slip, .logo, .tab';
 
   addEventListener('mousemove', (e) => {
     mx = e.clientX; my = e.clientY;
     const el = e.target;
     const isInteractive = el.closest && el.closest(interactive);
     anchor.classList.toggle('is-active', !!isInteractive);
-    const onDark = el.closest && el.closest('.code, .run, .tab.is-active, .loader');
+    const onDark = el.closest && el.closest('.code, .run, .tab.is-active, .loader, .canvas-box');
     anchor.classList.toggle('on-dark', !!onDark);
-    // bezier handles extend outward on interactive hover
     const ext = isInteractive ? 8 : 0;
     h1.style.transform = `translateX(${-ext}px)`;
     h2.style.transform = `translateX(${ext}px)`;
@@ -185,7 +174,7 @@ function initCursor() {
   })();
 }
 
-/* --------------------------------------------------- LOADER — Path Simplify */
+/* --------------------------------------------------- LOADER — Ratio Calc */
 function runLoader() {
   const loader = $('#loader');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -193,7 +182,6 @@ function runLoader() {
 
   if (reduce) { dismiss(); return; }
 
-  // noisy raw path
   let d = 'M40 168 ';
   for (let i = 1; i <= 10; i++) {
     const x = 40 + i * 16 + (Math.random() * 18 - 9);
@@ -205,13 +193,15 @@ function runLoader() {
   const clean = $('#loaderClean');
   requestAnimationFrame(() => { clean.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1)'; clean.style.strokeDashoffset = '0'; });
 
-  // tick KB down
   const kbEl = $('#loaderKB');
-  const start = performance.now(), from = 48.0, to = 12.4, dur = 1200;
+  const ratios = ['16:9', '4:3', '1:1', '3:2', '21:9'];
+  let idx = 0;
+  const start = performance.now(), dur = 1200;
   (function tick(t) {
     const p = Math.min(1, (t - start) / dur);
     const e = 1 - Math.pow(1 - p, 3);
-    kbEl.textContent = (from + (to - from) * e).toFixed(1);
+    const rIdx = Math.floor(e * (ratios.length - 1));
+    kbEl.textContent = ratios[rIdx];
     if (p < 1) requestAnimationFrame(tick);
   })(start);
 
@@ -224,22 +214,17 @@ function init() {
   initCursor();
   renderSlips();
 
-  const dz = $('#dropzone'), fi = $('#fileInput'), input = $('#inputCode');
+  $('#widthInput').value = state.width;
+  $('#heightInput').value = state.height;
+  updateDisplay();
+  updateCanvas();
+  updateOutput();
 
-  dz.addEventListener('click', () => fi.click());
-  fi.addEventListener('change', () => readFile(fi.files[0]));
-
-  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('is-drag'); }));
-  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); if (ev === 'dragleave' && dz.contains(e.relatedTarget)) return; dz.classList.remove('is-drag'); }));
-  dz.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) readFile(f); });
-  // allow dropping anywhere on the input panel
-  const ip = $('#inputPanel');
-  ['dragover'].forEach(ev => ip.addEventListener(ev, (e) => e.preventDefault()));
-  ip.addEventListener('drop', (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) readFile(f); });
-
-  input.addEventListener('input', () => { $('#runBtn').disabled = !input.value.trim(); });
-
-  $('#runBtn').addEventListener('click', runOptimize);
+  $('#calcBtn').addEventListener('click', calculate);
+  
+  // Auto-calculate on input
+  $('#widthInput').addEventListener('input', () => { if ($('#heightInput').value) calculate(); });
+  $('#heightInput').addEventListener('input', () => { if ($('#widthInput').value) calculate(); });
 
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => selectTab(t.dataset.fmt)));
 
@@ -250,22 +235,10 @@ function init() {
     catch { $('#outputCode').select(); document.execCommand('copy'); toast('Copied'); }
   });
 
-  $('#downloadBtn').addEventListener('click', () => {
-    const out = $('#outputCode').value;
-    if (!out) return;
-    const ext = EXT[state.fmt] || 'txt';
-    const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${state.name}.${state.fmt === 'svg' || state.fmt === 'tailwind' ? 'svg' : ext}`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-    toast('Downloaded');
-  });
-
   $('#clearSlips').addEventListener('click', () => { saveHistory([]); renderSlips(); toast('History cleared'); });
 
-  enableExports(false);
+  // Resize canvas on window resize
+  window.addEventListener('resize', updateCanvas);
 }
 
 function markCopied() {
@@ -275,4 +248,4 @@ function markCopied() {
 }
 
 if (document.readyState !== 'loading') init();
-else document.addEventListener('DOMContentLoaded', init);
+else document.addEventListener('DOMContentLoaded', init());

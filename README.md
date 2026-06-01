@@ -1,23 +1,24 @@
 # Aspect
 
-Aspect is a 100% client-side SVG asset optimizer and code generator. Built with Swiss/International Typographic Style principles, it provides instant optimization without server processing or user accounts.
+Aspect is a dead-simple, local-first aspect ratio calculator and padding visualizer for UI developers and video editors. Input raw pixel dimensions (e.g., 1440x900), and it instantly outputs the simplified ratio, the exact CSS aspect-ratio property, corresponding Tailwind utility classes, and a live-scaling minimal canvas container.
 
 *Last updated: 2026-06-01*
 
 ## Features
 
-- **Local Optimization**: SVGO library vendored locally — no server calls, no privacy concerns
-- **Split-Screen Playground**: Raw input on left, optimized preview with kinetic byte stack on right
-- **Five Export Formats**: SVG, JSX, Vue SFC, Tailwind inline SVG, Data URI
-- **File History**: Local browser state stores recent optimizations
+- **Instant Calculation**: GCD algorithm simplifies any pixel dimensions to lowest terms (e.g., 1920x1080 → 16:9)
+- **CSS Generation**: Exact `aspect-ratio` property with decimal notation for precision
+- **Tailwind Mapping**: Automatic mapping to Tailwind aspect-ratio utilities (aspect-video, aspect-square, custom values)
+- **Live Canvas**: Responsive visual container that scales to match your aspect ratio in real-time
+- **Session History**: Local browser state stores recent calculations for quick recall
 - **Custom Cursor**: Anchor Node cursor with crosshair and handles
-- **Path Simplification Loader**: Animated noisy SVG path with byte countdown
 - **Swiss Design**: Signal Yellow, Deep Charcoal, Code Surface Noir, Stark White palette with Neue Haas Grotesk Display and SF Mono typography
+- **100% Client-Side**: No server calls, no uploads, no accounts
 
 ## Tech Stack
 
 - Vanilla JavaScript (ES6+)
-- SVGO (vendored locally as `/vendor/svgo.browser.js`)
+- GCD algorithm for ratio simplification
 - CSS Grid/Flexbox for layout
 - Local Storage for history persistence
 - Zero external dependencies for runtime
@@ -31,10 +32,7 @@ aspect-calyvent/
 ├── terms.html              # Terms of use
 ├── assets/
 │   ├── aspect.css          # Swiss design system
-│   ├── app.js              # Main application controller
-│   └── exporters.js        # Export format generators
-├── vendor/
-│   └── svgo.browser.js     # Vendored SVGO library
+│   └── app.js              # Main application controller
 ├── favicon.svg             # SVG favicon
 ├── favicon.ico             # ICO favicon
 ├── favicon-96x96.png       # PNG favicon
@@ -54,9 +52,9 @@ Aspect is designed for Cloudflare Pages with a custom domain (aspect.calyvent.co
 
 Aspect follows strict Swiss/International Typographic Style:
 - No gradients, no shadows, border-radius 0
-- Solid 2px charcoal rules
+- Solid 1px charcoal rules
 - Architectural typography with Neue Haas Grotesk Display and SF Mono
-- Kinetic truncation logo with anchor points visible on hover
+- Kinetic truncation logo with ratio display
 - Living texture through subtle animations and transitions
 
 ## Attribution
