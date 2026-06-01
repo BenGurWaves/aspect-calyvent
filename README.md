@@ -2,6 +2,8 @@
 
 Aspect is a 100% client-side SVG asset optimizer and code generator. Built with Swiss/International Typographic Style principles, it provides instant optimization without server processing or user accounts.
 
+*Last updated: 2026-06-01*
+
 ## Features
 
 - **Local Optimization**: SVGO library vendored locally — no server calls, no privacy concerns
