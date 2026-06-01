@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Optimizer & Code Generator | Free, In-Browser — ASPECT</title>
+  <meta name="description" content="ASPECT is a 100% client-side SVG optimizer. Drop a vector to strip metadata, normalize the viewBox, and optimize paths — then export to JSX, Vue, Tailwind, or a data URI. No upload, no account.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://aspect.calyvent.com/">
+  <meta name="theme-color" content="#ECC822">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ASPECT">
+  <meta property="og:title" content="ASPECT — SVG Optimizer & Code Generator">
+  <meta property="og:description" content="Strip metadata, normalize viewBox, optimize paths, and export to JSX/Vue/Tailwind/Data URI. Entirely in your browser.">
+  <meta property="og:url" content="https://aspect.calyvent.com/">
+  <meta property="og:image" content="https://aspect.calyvent.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://aspect.calyvent.com/og.png">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/assets/aspect.css">
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"ASPECT — SVG Optimizer & Code Generator","operatingSystem":"All","applicationCategory":"DeveloperApplication","url":"https://aspect.calyvent.com/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":"SVG optimization, Metadata stripping, viewBox normalization, Path optimization, Export to JSX, Vue, Tailwind, Data URI. 100% client-side.","creator":{"@type":"Organization","name":"Velocity","url":"https://velocity.calyvent.com"}}
+  </script>
+</head>
+<body>
+
+  <!-- ELEGANT LOADER — Path Simplification -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <svg viewBox="0 0 240 240" fill="none">
+      <path class="raw" id="loaderRaw" d=""></path>
+      <path class="clean" id="loaderClean" d="M40 168 C 70 60, 120 60, 120 120 S 170 180, 200 72"></path>
+    </svg>
+    <div class="loader__count">Simplifying paths · <b id="loaderKB">48.0</b> KB</div>
+  </div>
+
+  <!-- CUSTOM CURSOR — The Anchor Node -->
+  <div class="anchor" id="anchor" aria-hidden="true">
+    <svg viewBox="0 0 40 40">
+      <line class="cross" x1="20" y1="6" x2="20" y2="34"></line>
+      <line class="cross" x1="6" y1="20" x2="34" y2="20"></line>
+      <rect class="node-sq" x="14" y="14" width="12" height="12"></rect>
+      <circle class="hdot handle" id="h1" cx="4" cy="20" r="2.5"></circle>
+      <circle class="hdot handle" id="h2" cx="36" cy="20" r="2.5"></circle>
+    </svg>
+  </div>
+
+  <main class="frame">
+
+    <!-- TOP REGISTER — margin stamps + kinetic truncation logo -->
+    <header class="register">
+      <div class="register__meta">
+        <b>ASPECT</b><br>
+        <span class="dim">SVG OPTIMIZER /</span><br>
+        <span class="dim">CODE GENERATOR</span>
+      </div>
+
+      <div class="logo" id="logo" aria-label="ASPECT">
+        <div class="logo__l1">ASPECT</div>
+        <div class="logo__l2">ASPECT</div>
+        <div class="logo__l3"><span>ASPECT</span><span class="logo__vb mono">0 0 24 24</span></div>
+      </div>
+
+      <div class="register__meta register__meta--right">
+        <span class="dim">EST.</span> <b>CALYVENT</b><br>
+        <span class="dim">100% CLIENT-SIDE</span><br>
+        <span class="dim">NO UPLOAD · NO ACCOUNT</span>
+      </div>
+    </header>
+
+    <!-- THE STAGE — split-screen proofing grid -->
+    <section class="stage">
+
+      <!-- LEFT — INPUT SPECIMEN -->
+      <div class="panel" id="inputPanel">
+        <div class="panel__head"><span>Input · Raw Specimen</span><span class="idx">01</span></div>
+        <div class="panel__body">
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone__inner">
+              <div class="dropzone__big">Drop SVG</div>
+              <div class="dropzone__rule"></div>
+              <div class="dropzone__sub">drop a file, click to browse,<br>or paste markup below</div>
+            </div>
+            <input type="file" id="fileInput" accept=".svg,image/svg+xml" hidden>
+          </div>
+          <textarea class="code" id="inputCode" spellcheck="false" placeholder="<svg> … paste raw markup here … </svg>"></textarea>
+        </div>
+      </div>
+
+      <!-- CENTER — PROOF + KINETIC BYTE STACK -->
+      <div class="panel center" id="centerPanel">
+        <div class="panel__head"><span>Proof · Optimized</span><span class="idx">02</span></div>
+        <div class="panel__body">
+          <div class="preview" id="preview"><span class="preview__empty">awaiting specimen</span></div>
+          <div class="metrics">
+            <div class="bytestack">
+              <span class="before" id="byteBefore">— KB</span>
+              <span class="after" id="byteAfter">0.0<span class="unit"> KB</span></span>
+            </div>
+            <div class="reduction">
+              <div class="pct" id="redPct">0%</div>
+              <div class="lbl">reduced</div>
+            </div>
+          </div>
+          <button class="run" id="runBtn" disabled>Optimize</button>
+        </div>
+      </div>
+
+      <!-- RIGHT — EXPORT PROOFS -->
+      <div class="panel" id="outputPanel">
+        <div class="panel__head"><span>Export · Pull a Proof</span><span class="idx">03</span></div>
+        <div class="panel__body">
+          <div class="tabs" id="tabs" role="tablist">
+            <button class="tab is-active" data-fmt="svg" role="tab">SVG</button>
+            <button class="tab" data-fmt="jsx" role="tab">JSX</button>
+            <button class="tab" data-fmt="vue" role="tab">Vue</button>
+            <button class="tab" data-fmt="tailwind" role="tab">Tailwind</button>
+            <button class="tab" data-fmt="datauri" role="tab">Data URI</button>
+          </div>
+          <textarea class="code is-out" id="outputCode" spellcheck="false" readonly placeholder="optimized output appears here"></textarea>
+          <div class="export-actions">
+            <button id="copyBtn">Copy</button>
+            <button id="downloadBtn">Download</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PROOF-SLIP HISTORY RAIL -->
+    <nav class="rail" aria-label="Session history">
+      <span class="rail__lbl">Proof Slips ·</span>
+      <div class="rail__slips" id="slips"></div>
+      <button class="rail__clear" id="clearSlips" hidden>clear</button>
+    </nav>
+
+    <!-- ATTRIBUTION STAMPS — gallery frame -->
+    <footer class="attrib">
+      <div class="forge">
+        Forged by <a href="https://velocity.calyvent.com" target="_blank" rel="noopener"><b>Velocity</b></a>
+        — Digital Architecture House
+      </div>
+      <div class="legal">
+        <a href="https://calyvent.com" target="_blank" rel="noopener"><b>Calyvent</b></a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="/assets/app.js"></script>
+  <!-- Engine: PASSED | All Signatures: YES | Anti-Patterns: 0 -->
+</body>
+</html>

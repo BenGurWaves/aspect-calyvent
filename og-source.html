@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:630px; }
+  body {
+    background:#ECC822; color:#121212;
+    font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+    position:relative; overflow:hidden;
+  }
+  body::after { content:''; position:absolute; inset:0; opacity:0.06; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .frame { position:absolute; inset:40px; border:2px solid #121212; }
+  .reg { position:absolute; top:62px; left:64px; right:64px; display:flex; justify-content:space-between;
+    font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:14px; letter-spacing:0.06em; text-transform:uppercase; }
+  .reg .r { text-align:right; }
+  .stack { position:absolute; left:60px; bottom:120px; line-height:0.8; font-weight:900; letter-spacing:-0.05em; text-transform:uppercase; }
+  .stack .a1 { font-size:300px; height:165px; overflow:hidden; }
+  .stack .a2 { font-size:150px; margin-top:-6px; }
+  .stack .a3 { font-size:78px; display:flex; align-items:baseline; gap:22px; margin-top:-4px; }
+  .stack .vb { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:26px; font-weight:400; letter-spacing:0; opacity:0.62; }
+  .tag { position:absolute; right:64px; bottom:128px; text-align:right;
+    font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:16px; letter-spacing:0.04em; text-transform:uppercase; line-height:1.7; }
+  .tag b { font-family:'Helvetica Neue',Arial,sans-serif; font-weight:700; }
+  .url { position:absolute; left:64px; bottom:66px; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:15px; letter-spacing:0.08em; }
+  .node { position:absolute; right:120px; top:150px; width:130px; height:130px; }
+  .node line { stroke:#121212; stroke-width:2; }
+  .node rect { fill:none; stroke:#121212; stroke-width:5; }
+</style></head>
+<body>
+  <div class="frame"></div>
+  <div class="reg"><div>ASPECT — SVG OPTIMIZER / CODE GENERATOR</div><div class="r">EST. CALYVENT</div></div>
+  <svg class="node" viewBox="0 0 130 130"><line x1="65" y1="8" x2="65" y2="122"/><line x1="8" y1="65" x2="122" y2="65"/><rect x="42" y="42" width="46" height="46"/></svg>
+  <div class="stack">
+    <div class="a1">ASPECT</div>
+    <div class="a2">ASPECT</div>
+    <div class="a3"><span>ASPECT</span><span class="vb">0 0 24 24</span></div>
+  </div>
+  <div class="tag"><b>Optimize · Strip · Normalize</b><br>JSX · Vue · Tailwind · Data URI<br>100% in your browser</div>
+  <div class="url">aspect.calyvent.com</div>
+</body></html>
