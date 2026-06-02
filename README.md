@@ -1,6 +1,6 @@
 # Aspect
 
-Aspect is a dead-simple, local-first aspect ratio calculator and padding visualizer for UI developers and video editors. Input raw pixel dimensions (e.g., 1440x900), and it instantly outputs the simplified ratio, the exact CSS aspect-ratio property, corresponding Tailwind utility classes, and a live-scaling minimal canvas container.
+Aspect is a dead-simple, local-first aspect ratio calculator and padding visualizer for UI developers and video editors. You input raw pixel dimensions (e.g., 1440x900), and it instantly outputs the simplified ratio, the exact CSS aspect-ratio property, corresponding Tailwind utility classes, and a live-scaling minimal canvas container. To build it, you only need basic JavaScript math (a greatest common divisor algorithm) and a responsive CSS box wrapper, making it a bulletproof, zero-maintenance magnet that funnels design-conscious developers straight to Velocity.
 
 *Last updated: 2026-06-01*
 
