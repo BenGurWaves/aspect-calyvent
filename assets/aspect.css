@@ -67,6 +67,7 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
   padding: clamp(14px, 2.2vw, 34px);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 /* Outer margin stamps — top register */
@@ -115,7 +116,7 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
 
 /* ===========================  THE STAGE (split-screen grid)  ============== */
 .stage {
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 0;
   border: 1px solid var(--charcoal);
   display: grid;
@@ -332,37 +333,37 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
 .content {
   max-width: 760px;
   margin: 0 auto;
-  padding: 48px 20px;
+  padding: 32px 20px;
   border-top: var(--rule) solid var(--charcoal);
-  margin-top: 48px;
+  margin-top: 32px;
 }
 .content h2 {
   font-family: var(--display);
-  font-size: clamp(24px, 5vw, 32px);
+  font-size: clamp(20px, 4vw, 28px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: -0.03em;
-  margin: 32px 0 16px;
-  padding-top: 24px;
+  margin: 24px 0 12px;
+  padding-top: 20px;
   border-top: var(--rule) solid var(--charcoal);
 }
 .content h2:first-child { border-top: none; padding-top: 0; margin-top: 0; }
 .content p {
-  font-size: 16px;
-  line-height: 1.7;
-  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
   opacity: 0.85;
 }
 .content ol.steps {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 }
 .content ol.steps li {
-  padding: 8px 0 8px 24px;
+  padding: 6px 0 6px 24px;
   position: relative;
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.5;
 }
 .content ol.steps li::before {
   content: counter(list-item);
@@ -376,22 +377,22 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
 .content .code-sample {
   background: var(--noir);
   color: var(--white);
-  padding: 16px;
-  margin: 16px 0;
+  padding: 12px;
+  margin: 12px 0;
   border: var(--rule) solid var(--charcoal);
 }
 .content .code-sample__label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.6;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .content .code-sample__output {
   font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: 12px;
+  line-height: 1.6;
 }
 .content .code-sample__output code {
   background: var(--charcoal);
@@ -399,10 +400,10 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
   border-radius: 0;
 }
 .content .faq {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .content .faq-item {
-  padding: 16px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--charcoal);
   opacity: 0.5;
 }
@@ -410,13 +411,13 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
 .content .faq-item strong {
   display: block;
   font-family: var(--display);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .content .faq-item p {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
   margin: 0;
 }
 
