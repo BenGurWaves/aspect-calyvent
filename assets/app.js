@@ -49,6 +49,11 @@ function calculate() {
     toast('Enter valid dimensions');
     return;
   }
+  
+  if (w > 9999999 || h > 9999999) {
+    toast('Dimensions too large');
+    return;
+  }
 
   state.width = w;
   state.height = h;
@@ -130,7 +135,13 @@ function renderSlips() {
   h.forEach(e => {
     const b = document.createElement('button');
     b.className = 'slip';
-    b.innerHTML = `${e.w}×${e.h}<span class="s-pct">${e.ratio}</span>`;
+    const label = document.createElement('span');
+    label.textContent = `${e.w}×${e.h}`;
+    const ratio = document.createElement('span');
+    ratio.className = 's-pct';
+    ratio.textContent = e.ratio;
+    b.appendChild(label);
+    b.appendChild(ratio);
     b.addEventListener('click', () => {
       $('#widthInput').value = e.w;
       $('#heightInput').value = e.h;

@@ -280,6 +280,18 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
 .attrib a:hover::after { width: 100%; }
 .attrib .legal a { margin-left: 12px; opacity: 0.4; transition: opacity 0.3s ease; }
 .attrib .legal a:hover { opacity: 0.8; }
+.attrib .related {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--charcoal);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.attrib .related__lbl { opacity: 0.6; margin-right: 8px; }
+.attrib .related a { opacity: 0.4; transition: opacity 0.3s ease; }
+.attrib .related a:hover { opacity: 0.8; }
 
 /* ===========================  CUSTOM CURSOR — THE ANCHOR NODE  ============ */
 .anchor { position: fixed; top: 0; left: 0; z-index: 9500; pointer-events: none; width: 40px; height: 40px; transform: translate(-50%, -50%); will-change: transform; }
@@ -315,6 +327,98 @@ button { font-family: inherit; cursor: none; background: none; border: none; col
   border: var(--rule) solid var(--charcoal);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================  CONTENT MEAT — SEO  ========================= */
+.content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 20px;
+  border-top: var(--rule) solid var(--charcoal);
+  margin-top: 48px;
+}
+.content h2 {
+  font-family: var(--display);
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  margin: 32px 0 16px;
+  padding-top: 24px;
+  border-top: var(--rule) solid var(--charcoal);
+}
+.content h2:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+.content p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  opacity: 0.85;
+}
+.content ol.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+.content ol.steps li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.content ol.steps li::before {
+  content: counter(list-item);
+  position: absolute;
+  left: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+.content .code-sample {
+  background: var(--noir);
+  color: var(--white);
+  padding: 16px;
+  margin: 16px 0;
+  border: var(--rule) solid var(--charcoal);
+}
+.content .code-sample__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+.content .code-sample__output {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.content .code-sample__output code {
+  background: var(--charcoal);
+  padding: 2px 6px;
+  border-radius: 0;
+}
+.content .faq {
+  margin-top: 24px;
+}
+.content .faq-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--charcoal);
+  opacity: 0.5;
+}
+.content .faq-item:last-child { border-bottom: none; }
+.content .faq-item strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.content .faq-item p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
 
 /* ===========================  RESPONSIVE  ================================ */
 @media (max-width: 900px) {
